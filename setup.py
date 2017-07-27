@@ -9,8 +9,9 @@ setup(
   author = "Günther Noack",
   author_email = "guenther@unix-ag.uni-kl.de",
   description = "A E S T H E T I C animations for LED strips.",
+  packages = find_packages(),
   # long_description = "TODO",
   license = "Apache",
   keywords = "led blinkstick",
-  # url = "TODO",
+  url = "https://github.com/gnoack/aesthetic",
 )
