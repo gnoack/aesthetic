@@ -17,7 +17,9 @@ def log(*args):
   print(args)
 
 def fetch_data():
-  return urlrequest.urlopen('http://data.geo.admin.ch/ch.meteoschweiz.swissmetnet/VQHA69.csv')
+  url = 'http://data.geo.admin.ch/ch.meteoschweiz.swissmetnet/VQHA69.csv'
+  for line in urlrequest.urlopen(url):
+    yield line.decode('utf-8')
 
 def open_saved_data():
   return open('VQHA69.csv')
@@ -60,8 +62,9 @@ def visualize2(wetter):
 
 
 def interpret_data(reader):
-  for unused in range(2):
-    reader.readline()  # Discard two lines... :-/
+  # Discard two lines... :-/
+  next(reader)
+  next(reader)
 
   for line in csv.DictReader(reader, delimiter='|'):
     # TODO: Make this configurable.
