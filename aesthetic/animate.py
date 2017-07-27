@@ -3,9 +3,8 @@ import itertools
 import math
 import time
 
-import colors
-
-from output import blinkstick
+from aesthetic import colors
+from aesthetic.output import blinkstick
 
 
 def mix_color(a, b, f=0.5):

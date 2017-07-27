@@ -1,4 +1,4 @@
-from util import normalize
+from aesthetic.util import normalize
 
 red = (255, 0, 0)
 blue = (0, 0, 255)
@@ -41,5 +41,3 @@ def get_color(temperatur):
         f = normalize(temperatur, prev_temp, next_temp)
         return mix_color(f, prev_color, next_color)
       prev_temp, prev_color = next_temp, next_color
-
-
