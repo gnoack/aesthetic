@@ -26,21 +26,21 @@ def sine_gen(bottom, top, init=0, speed=0.1):
     yield bottom + normalized * (top-bottom)
 
 def blend_up(steps=20):
-  for x in xrange(steps, 0, -1):
+  for x in range(steps, 0, -1):
     yield (math.cos(x * (math.pi / steps)) + 1) / 2
 
 def blend_down(steps=20):
   return (1-f for f in blend_up(steps=steps))
 
 def repeat(value, steps=20):
-  return (value for _ in xrange(steps))
+  return (value for _ in range(steps))
 
 def forever(value=1):
   while True:
     yield value
 
 def ones(steps=20):
-  return (1 for _ in xrange(int(steps)))
+  return (1 for _ in range(int(steps)))
 
 def cycle_colors(colors, blend_steps=40, sustain_steps=30):
   blend_steps = int(blend_steps)
@@ -51,22 +51,22 @@ def cycle_colors(colors, blend_steps=40, sustain_steps=30):
   for new_color in color_cycle:
     for f in blend_up(steps=blend_steps):
       yield mix_color(old_color, new_color, f=f)
-    for _ in xrange(sustain_steps):
+    for _ in range(sustain_steps):
       yield new_color
     old_color = new_color
 
 def draw_glow(colscreen, position, width, color, f=0.5):
-  for x in xrange(max(0, int(position-width)),
+  for x in range(max(0, int(position-width)),
                   min(len(colscreen), int(position+width))):
     pixel_f = (math.cos((position - x) * (math.pi / width)) + 1) / 2
     colscreen[x] = mix_color(colscreen[x], color, f * pixel_f)
 
 def draw_clear(colscreen):
-  for idx in xrange(len(colscreen)):
+  for idx in range(len(colscreen)):
     colscreen[idx] = (0, 0, 0)
 
 def generate_glow(colorscreen, position_gen, color_gen):
-  for pos, col in itertools.izip(position_gen, color_gen):
+  for pos, col in zip(position_gen, color_gen):
     width = 15
     draw_glow(colorscreen, pos, width, col, f=1)
     yield
@@ -78,11 +78,11 @@ def cycle_visibility_phases(invisible_steps=30, visible_steps=60,
   transition_steps = int(transition_steps)
 
   while True:
-    for _ in xrange(invisible_steps):
+    for _ in range(invisible_steps):
       yield 0
     for f in blend_up(steps=transition_steps):
       yield f
-    for _ in xrange(visible_steps):
+    for _ in range(visible_steps):
       yield 1
     for f in blend_up(steps=transition_steps):
       yield 1-f
@@ -102,7 +102,7 @@ def draw_blended_pixel(colorscreen, pos, color, f=0.5):
 
 def generate_floatie(colorscreen, position_gen, appearance_gen,
                      color=(255, 255, 255)):
-  for pos, f in itertools.izip(position_gen, appearance_gen):
+  for pos, f in zip(position_gen, appearance_gen):
     draw_blended_pixel(colorscreen, pos, color, f=f)
     yield
 
@@ -118,7 +118,7 @@ def multiple_floaties(colorscreen, hectic=0):
         visible_steps=random.randint(10, 30),
         invisible_steps=random.randint(100, 1000)),
       color=colors.white)
-    for _ in xrange(int(5 + 10*hectic))
+    for _ in range(int(5 + 10*hectic))
   ]
   while True:
     for f in floaties:

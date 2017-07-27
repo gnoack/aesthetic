@@ -5,6 +5,10 @@ import time
 from blinkstick import blinkstick
 
 
+def is_available():
+  return bool(blinkstick.find_all())
+
+
 def render(animation, channel=1):
   """Render animation on a multi-LED Blinkstick Pro.
 
@@ -19,4 +23,3 @@ def render(animation, channel=1):
             for value in (g, r, b)]
     bs.set_led_data(channel=channel, data=data)
     time.sleep(0.02)
-

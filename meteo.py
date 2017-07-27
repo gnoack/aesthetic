@@ -1,21 +1,22 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 import time
 import math
 import collections
 import csv
 import sys
-import urllib2
+from urllib import request as urlrequest
 
 import colors
 import animate
 from util import normalize
 from output import blinkstick
+from output import tkinter
 
 def log(*args):
   print(args)
 
 def fetch_data():
-  return urllib2.urlopen('http://data.geo.admin.ch/ch.meteoschweiz.swissmetnet/VQHA69.csv')
+  return urlrequest.urlopen('http://data.geo.admin.ch/ch.meteoschweiz.swissmetnet/VQHA69.csv')
 
 def open_saved_data():
   return open('VQHA69.csv')
@@ -46,9 +47,14 @@ def visualize2(wetter):
   farben1 = list(map(drag, farben1))
   farben2 = list(map(drag, farben2))
 
-  blinkstick.render(animate.animate(glow1_colors=farben1,
-                                    glow2_colors=farben2,
-                                    hectic=wind))
+  if blinkstick.is_available():
+    renderer = blinkstick
+  else:
+    renderer = tkinter
+
+  renderer.render(animate.animate(glow1_colors=farben1,
+                                  glow2_colors=farben2,
+                                  hectic=wind))
 
 
 def interpret_data(reader):
