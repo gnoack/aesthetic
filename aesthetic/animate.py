@@ -7,12 +7,6 @@ from aesthetic import colors
 from aesthetic.output import blinkstick
 
 
-def mix_color(a, b, f=0.5):
-  ar, ag, ab = a
-  br, bg, bb = b
-  fneg = 1-f
-  return (ar*fneg + br*f, ag*fneg + bg*f, ab*fneg + bb*f)
-
 def numbers(init=0, step=1):
   while True:
     yield init
@@ -41,15 +35,15 @@ def forever(value=1):
 def ones(steps=20):
   return (1 for _ in range(int(steps)))
 
-def cycle_colors(colors, blend_steps=40, sustain_steps=30):
+def cycle_colors(colorscreen, blend_steps=40, sustain_steps=30):
   blend_steps = int(blend_steps)
   sustain_steps = int(sustain_steps)
 
-  color_cycle = itertools.cycle(colors)
+  color_cycle = itertools.cycle(colorscreen)
   old_color = next(color_cycle)
   for new_color in color_cycle:
     for f in blend_up(steps=blend_steps):
-      yield mix_color(old_color, new_color, f=f)
+      yield colors.mix_color(old_color, new_color, f=f)
     for _ in range(sustain_steps):
       yield new_color
     old_color = new_color
@@ -58,7 +52,7 @@ def draw_glow(colscreen, position, width, color, f=0.5):
   for x in range(max(0, int(position-width)),
                   min(len(colscreen), int(position+width))):
     pixel_f = (math.cos((position - x) * (math.pi / width)) + 1) / 2
-    colscreen[x] = mix_color(colscreen[x], color, f * pixel_f)
+    colscreen[x] = colors.mix_color(colscreen[x], color, f * pixel_f)
 
 def draw_clear(colscreen):
   for idx in range(len(colscreen)):
@@ -89,7 +83,7 @@ def cycle_visibility_phases(invisible_steps=30, visible_steps=60,
 def draw_pixel(colorscreen, pos, color, f=0.5):
   pos = int(pos)
   if 0 <= pos < len(colorscreen):
-    colorscreen[pos] = mix_color(colorscreen[pos], color, f)
+    colorscreen[pos] = colors.mix_color(colorscreen[pos], color, f)
 
 def draw_blended_pixel(colorscreen, pos, color, f=0.5):
   x_min = int(pos)

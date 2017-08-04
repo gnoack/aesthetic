@@ -11,7 +11,7 @@ lightblue = (0x88, 0x88, 0xde)
 sunyellow = (0xff, 0xe2, 0x43)
 orange = (0xff, 0x7a, 0x00)
 
-def mix_color(f, a, b):
+def mix_color(a, b, f):
   ar, ag, ab = a
   br, bg, bb = b
   return (f*br + (1-f)*ar, f*bg + (1-f)*ag, f*bb + (1-f)*ab)
@@ -39,5 +39,5 @@ def get_color(temperatur):
     for next_temp, next_color in punkte:
       if prev_temp <= temperatur < next_temp:
         f = normalize(temperatur, prev_temp, next_temp)
-        return mix_color(f, prev_color, next_color)
+        return mix_color(prev_color, next_color, f)
       prev_temp, prev_color = next_temp, next_color
