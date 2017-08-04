@@ -26,25 +26,24 @@ def fetch_data():
 def open_saved_data():
   return open('VQHA69.csv')
 
-# TODO: Figure out what these things are called in English!
-Wetter = collections.namedtuple(
-  'Wetter',
+Weather = collections.namedtuple(
+  'Weather',
   (
-    'temperatur_celsius',
-    'windgeschwindigkeit_kmh',
-    'niederschlag_mm_10m',
+    'temperature_celsius',
+    'wind_speed_kmh',
+    'precipitation_mm_10m',
   )
 )
 
-def visualize(wetter, renderer):
-  if not wetter:
-    log("Keine Wetterdaten")
+def visualize(weather, renderer):
+  if not weather:
+    log("No weather data available.")
     return
 
-  log(wetter)
-  wind = normalize(wetter.windgeschwindigkeit_kmh, 0, 30)
-  regen = normalize(wetter.niederschlag_mm_10m, 0, 10)
-  farbe = colors.get_color(wetter.temperatur_celsius)
+  log(weather)
+  wind = normalize(weather.wind_speed_kmh, 0, 30)
+  regen = normalize(weather.precipitation_mm_10m, 0, 10)
+  farbe = colors.get_color(weather.temperature_celsius)
 
   farben1 = (colors.icyblue, colors.lightblue)
   farben2 = (colors.sunyellow, colors.orange, colors.red)
@@ -66,12 +65,12 @@ def interpret_data(reader):
   for line in csv.DictReader(reader, delimiter='|'):
     # TODO: Make this configurable.
     if line['stn'] == 'SMA':  # Zurich Fluntern
-      wetter = Wetter(
-        temperatur_celsius=float(line['tre200s0']),
-        windgeschwindigkeit_kmh=float(line['fu3010z0']),
-        niederschlag_mm_10m=float(line['rre150z0']),
+      weather = Weather(
+        temperature_celsius=float(line['tre200s0']),
+        wind_speed_kmh=float(line['fu3010z0']),
+        precipitation_mm_10m=float(line['rre150z0']),
       )
-      return wetter
+      return weather
   return None
 
 def parse_args(args):
