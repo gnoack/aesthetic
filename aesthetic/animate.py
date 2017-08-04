@@ -163,7 +163,6 @@ def animate(leds=53, glow1_colors=None,
       colorscreen,
       itertools.chain(blend_up(100), ones(1600), blend_down(100),)
     ),
-    generate_dampen(colorscreen, forever(0.3)),
   )
   return generate_multiple(colorscreen, animations)
 

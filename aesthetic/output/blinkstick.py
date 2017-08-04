@@ -9,7 +9,7 @@ def is_available():
   return bool(blinkstick.find_all())
 
 
-def render(animation, channel=1):
+def render(animation, channel=1, dampen=0.3):
   """Render animation on a multi-LED Blinkstick Pro.
 
   Args:
@@ -19,7 +19,7 @@ def render(animation, channel=1):
   bs, = blinkstick.find_all()
   #bs.set_mode(2)
   for colors in animation:
-    data = [int(value) for r, g, b in colors
+    data = [int(value * dampen) for r, g, b in colors
             for value in (g, r, b)]
     bs.set_led_data(channel=channel, data=data)
     time.sleep(0.02)
