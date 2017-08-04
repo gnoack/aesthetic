@@ -22,7 +22,7 @@ def render_frame(colors, scale=8):
   return im
 
 def save_gif(out, image, *more_images):
+  delay_ms = 1000 * 0.035
   image.save(out, save_all=True,
              append_images=list(more_images),
-             loop=1000,
-             duration=50)
+             duration=delay_ms, optimize=True)
