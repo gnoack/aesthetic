@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-import time
-import math
+import argparse
 import collections
 import csv
+import math
 import sys
+import time
 from urllib import request as urlrequest
 
-from aesthetic import colors
 from aesthetic import animate
-from aesthetic.util import normalize
+from aesthetic import colors
 from aesthetic.output import blinkstick
+from aesthetic.output import gif
 from aesthetic.output import tkinter
+from aesthetic.util import normalize
 
 
 def log(*args):
@@ -34,7 +36,7 @@ Wetter = collections.namedtuple(
   )
 )
 
-def visualize(wetter):
+def visualize(wetter, renderer):
   if not wetter:
     log("Keine Wetterdaten")
     return
@@ -51,14 +53,9 @@ def visualize(wetter):
   farben1 = list(map(drag, farben1))
   farben2 = list(map(drag, farben2))
 
-  if blinkstick.is_available():
-    renderer = blinkstick
-  else:
-    renderer = tkinter
-
-  renderer.render(animate.animate(glow1_colors=farben1,
-                                  glow2_colors=farben2,
-                                  hectic=wind))
+  renderer(animate.animate(glow1_colors=farben1,
+                           glow2_colors=farben2,
+                           hectic=wind))
 
 
 def interpret_data(reader):
@@ -78,14 +75,26 @@ def interpret_data(reader):
   return None
 
 def parse_args(args):
-  import argparse
   parser = argparse.ArgumentParser(
     description=(
       'An animated weather indicator based on Swiss meteorological data.'))
-  parser.add_argument('source', nargs='?', choices=('web', 'local'), default='local')
-  parser.add_argument('quiet', nargs='?', type=bool, default=False)
+  parser.add_argument('--source', '-src', nargs='?',
+                      choices=('web', 'local'), default='local')
+  parser.add_argument('--quiet', '-q', dest='quiet',
+                      action='store_true', default=False)
+  parser.add_argument('--type', '-t', dest='type', nargs='?',
+                      choices=('blinkstick', 'tk', 'gif'), default='tk')
+  parser.add_argument('--output', '-o', dest='output', nargs='?',
+                      type=argparse.FileType('wb'), default=None)
 
-  return parser.parse_args(args)
+  args = parser.parse_args(args)
+
+  if args.output and not args.type == "gif":
+    parser.error('--output only makes sense together with gif output type')
+
+  args.output = args.output or sys.stdout
+
+  return args
 
 def main(args):
   args = parse_args(args)
@@ -99,7 +108,14 @@ def main(args):
   elif args.source == 'local':
     reader = open_saved_data()
 
-  visualize(interpret_data(reader))
+  if args.type == "blinkstick":
+    renderer = blinkstick.render
+  elif args.type == "tk":
+    renderer = tkinter.render
+  elif args.type == "gif":
+    renderer = lambda animation: gif.render(animation, args.output)
+
+  visualize(interpret_data(reader), renderer)
 
 
 if __name__ == "__main__":
