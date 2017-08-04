@@ -5,7 +5,7 @@ import csv
 import math
 import sys
 import time
-from urllib import request as urlrequest
+import urllib.request
 
 from aesthetic import animate
 from aesthetic import colors
@@ -20,7 +20,7 @@ def log(*args):
 
 def fetch_data():
   url = 'http://data.geo.admin.ch/ch.meteoschweiz.swissmetnet/VQHA69.csv'
-  for line in urlrequest.urlopen(url):
+  for line in urllib.request.urlopen(url):
     yield line.decode('utf-8')
 
 def open_saved_data():
