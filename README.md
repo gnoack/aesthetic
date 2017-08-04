@@ -4,7 +4,9 @@ aesthetic is a utility for LED visualizations which
 can be displayed on individually controlled LED pixels
 such as LED strips.
 
-This may in the future support 
+Like this:
+
+![An example animation](docs/example.gif)
 
 Goals:
  - Decouple the three aspects:
