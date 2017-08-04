@@ -34,7 +34,7 @@ Wetter = collections.namedtuple(
   )
 )
 
-def visualize2(wetter):
+def visualize(wetter):
   if not wetter:
     log("Keine Wetterdaten")
     return
@@ -77,20 +77,29 @@ def interpret_data(reader):
       return wetter
   return None
 
+def parse_args(args):
+  import argparse
+  parser = argparse.ArgumentParser(
+    description=(
+      'An animated weather indicator based on Swiss meteorological data.'))
+  parser.add_argument('source', nargs='?', choices=('web', 'local'), default='local')
+  parser.add_argument('quiet', nargs='?', type=bool, default=False)
+
+  return parser.parse_args(args)
+
 def main(args):
-  # TODO: Use proper command line argument parsing.
-  if "-quiet" in args:
+  args = parse_args(args)
+
+  if args.quiet:
     global log
     log = lambda *args: None
 
-  if "-web" in args:
+  if args.source == 'web':
     reader = fetch_data()
-  elif "-local" in args:
+  elif args.source == 'local':
     reader = open_saved_data()
-  else:
-    sys.exit("need to pass -web or -local")
 
-  visualize2(interpret_data(reader))
+  visualize(interpret_data(reader))
 
 
 if __name__ == "__main__":
