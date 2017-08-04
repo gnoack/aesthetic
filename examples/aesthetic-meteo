@@ -49,7 +49,7 @@ def visualize(wetter, renderer):
   farben1 = (colors.icyblue, colors.lightblue)
   farben2 = (colors.sunyellow, colors.orange, colors.red)
   def drag(col):
-    return colors.mix_color(col, farbe, 0.6)
+    return colors.mix_color(col, farbe, 0.3)
   farben1 = list(map(drag, farben1))
   farben2 = list(map(drag, farben2))
 
