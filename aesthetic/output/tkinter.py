@@ -1,10 +1,12 @@
 import time
-import tkinter as tk
 
 def _to_tkcolor(color):
   return "#%02x%02x%02x" % tuple(map(int, color))
 
 def render(animation, scale=16, gap=1):
+  # Import lazy, so we don't crash for other use cases if tk is not installed.
+  import tkinter as tk
+
   led_count = 53
   delay_ms = int(1000 * 0.05)
 
