@@ -2,6 +2,7 @@
 import argparse
 import collections
 import csv
+import datetime
 import math
 import sys
 import time
@@ -14,9 +15,6 @@ from aesthetic.output import gif
 from aesthetic.output import tkinter
 from aesthetic.util import normalize
 
-
-def log(*args):
-  print(args)
 
 def fetch_data():
   url = 'http://data.geo.admin.ch/ch.meteoschweiz.swissmetnet/VQHA69.csv'
@@ -35,7 +33,7 @@ Weather = collections.namedtuple(
   )
 )
 
-def visualize(weather, renderer):
+def visualize(weather, renderer, log):
   if not weather:
     log("No weather data available.")
     return
@@ -78,7 +76,7 @@ def parse_args(args):
     description=(
       'An animated weather indicator based on Swiss meteorological data.'))
   parser.add_argument('--source', '-src', nargs='?',
-                      choices=('web', 'local'), default='local')
+                      choices=('web', 'local', 'stdin'), default='local')
   parser.add_argument('--quiet', '-q', dest='quiet',
                       action='store_true', default=False)
   parser.add_argument('--type', '-t', dest='type', nargs='?',
@@ -98,14 +96,17 @@ def parse_args(args):
 def main(args):
   args = parse_args(args)
 
-  if args.quiet:
-    global log
-    log = lambda *args: None
+  def log(*stuff):
+    if args.quiet:
+      return
+    print(*stuff)
 
   if args.source == 'web':
     reader = fetch_data()
   elif args.source == 'local':
     reader = open_saved_data()
+  elif args.source == 'stdin':
+    reader = sys.stdin
 
   if args.type == "blinkstick":
     renderer = blinkstick.render
@@ -114,7 +115,7 @@ def main(args):
   elif args.type == "gif":
     renderer = lambda animation: gif.render(animation, args.output)
 
-  visualize(interpret_data(reader), renderer)
+  visualize(interpret_data(reader), renderer, log=log)
 
 
 if __name__ == "__main__":
