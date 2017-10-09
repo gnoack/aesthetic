@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
+"""Visualize Meteoschweiz weather data on a LED strip.
+
+Usage:
+  wget http://data.geo.admin.ch/ch.meteoschweiz.swissmetnet/VQHA69.csv
+  cat VQHA69.csv | ./aesthetic-meteo
+"""
 import argparse
 import collections
 import csv
-import datetime
-import math
 import sys
-import time
-import urllib.request
 
 from aesthetic import animate
 from aesthetic import colors
@@ -16,14 +18,6 @@ from aesthetic.output import tkinter
 from aesthetic.util import normalize
 
 
-def fetch_data():
-  url = 'http://data.geo.admin.ch/ch.meteoschweiz.swissmetnet/VQHA69.csv'
-  for line in urllib.request.urlopen(url):
-    yield line.decode('utf-8')
-
-def open_saved_data():
-  return open('VQHA69.csv')
-
 Weather = collections.namedtuple(
   'Weather',
   (
@@ -32,6 +26,7 @@ Weather = collections.namedtuple(
     'precipitation_mm_10m',
   )
 )
+
 
 def visualize(weather, renderer, log):
   if not weather:
@@ -75,8 +70,6 @@ def parse_args(args):
   parser = argparse.ArgumentParser(
     description=(
       'An animated weather indicator based on Swiss meteorological data.'))
-  parser.add_argument('--source', '-src', nargs='?',
-                      choices=('web', 'local', 'stdin'), default='local')
   parser.add_argument('--quiet', '-q', dest='quiet',
                       action='store_true', default=False)
   parser.add_argument('--type', '-t', dest='type', nargs='?',
@@ -101,13 +94,6 @@ def main(args):
       return
     print(*stuff)
 
-  if args.source == 'web':
-    reader = fetch_data()
-  elif args.source == 'local':
-    reader = open_saved_data()
-  elif args.source == 'stdin':
-    reader = sys.stdin
-
   if args.type == "blinkstick":
     renderer = blinkstick.render
   elif args.type == "tk":
@@ -115,7 +101,7 @@ def main(args):
   elif args.type == "gif":
     renderer = lambda animation: gif.render(animation, args.output)
 
-  visualize(interpret_data(reader), renderer, log=log)
+  visualize(interpret_data(sys.stdin), renderer, log=log)
 
 
 if __name__ == "__main__":
