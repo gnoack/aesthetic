@@ -12,9 +12,8 @@ from aesthetic.output import tkinter
 from aesthetic.util import normalize
 
 
-def visualize(renderer):
+def visualize(renderer, temperature=20, hectic=0.1):
   hectic = 0.1
-  regen = 0
   farbe = colors.get_color(25)
 
   farben1 = (colors.icyblue, colors.lightblue)
@@ -37,6 +36,11 @@ def parse_args(args):
   parser.add_argument('--output', '-o', dest='output', nargs='?',
                       type=argparse.FileType('wb'), default=None)
 
+  parser.add_argument('--temperature', type=int, nargs='?', default=20,
+                      help='Color temperature (in "degrees celsius")')
+  parser.add_argument('--hectic', type=float, nargs='?', default=0.1,
+                      help='Hectic factor in (0,1)')
+
   args = parser.parse_args(args)
 
   if args.output and not args.type == "gif":
@@ -56,7 +60,7 @@ def main(args):
   elif args.type == "gif":
     renderer = lambda animation: gif.render(animation, args.output)
 
-  visualize(renderer)
+  visualize(renderer, temperature=args.temperature, hectic=args.hectic)
 
 
 if __name__ == "__main__":
