@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+"""Just a demo"""
+import argparse
+import collections
+import sys
+
+from aesthetic import animate
+from aesthetic import colors
+from aesthetic.output import blinkstick
+from aesthetic.output import gif
+from aesthetic.output import tkinter
+from aesthetic.util import normalize
+
+
+def visualize(renderer):
+  hectic = 0.1
+  regen = 0
+  farbe = colors.get_color(25)
+
+  farben1 = (colors.icyblue, colors.lightblue)
+  farben2 = (colors.sunyellow, colors.orange, colors.red)
+
+  # Slight tint.
+  def drag(col):
+    return colors.mix_color(col, farbe, 0.3)
+  farben1 = list(map(drag, farben1))
+  farben2 = list(map(drag, farben2))
+
+  renderer(animate.animate(glow1_colors=farben1,
+                           glow2_colors=farben2,
+                           hectic=hectic))
+
+def parse_args(args):
+  parser = argparse.ArgumentParser(description=('Blinkstick demo'))
+  parser.add_argument('--type', '-t', dest='type', nargs='?',
+                      choices=('blinkstick', 'tk', 'gif'), default='tk')
+  parser.add_argument('--output', '-o', dest='output', nargs='?',
+                      type=argparse.FileType('wb'), default=None)
+
+  args = parser.parse_args(args)
+
+  if args.output and not args.type == "gif":
+    parser.error('--output only makes sense together with gif output type')
+
+  args.output = args.output or sys.stdout
+
+  return args
+
+def main(args):
+  args = parse_args(args)
+
+  if args.type == "blinkstick":
+    renderer = blinkstick.render
+  elif args.type == "tk":
+    renderer = tkinter.render
+  elif args.type == "gif":
+    renderer = lambda animation: gif.render(animation, args.output)
+
+  visualize(renderer)
+
+
+if __name__ == "__main__":
+  main(sys.argv[1:])
