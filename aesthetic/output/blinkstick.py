@@ -2,7 +2,6 @@
 from __future__ import absolute_import
 
 import time
-from blinkstick import blinkstick
 
 
 def is_available():
@@ -16,6 +15,7 @@ def render(animation, channel=1, dampen=0.3):
     animation: A generator of [(r, g, b), ...] lists
     channel: Blinkstick pro channel: r=0, g=1, b=2.
   """
+  from blinkstick import blinkstick
   bs, = blinkstick.find_all()
   #bs.set_mode(2)
   for colors in animation:
